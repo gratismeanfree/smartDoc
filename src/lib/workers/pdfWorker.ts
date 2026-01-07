@@ -1,7 +1,6 @@
 import "dotenv/config"
 console.log("worker started")
 
-import IORedis from 'ioredis';
 import { Worker } from "bullmq";
 import { extractPdf } from "/Users/phuonganh/chatpdf/src/lib/extractPDF";
 import { getObjectBuffer } from "/Users/phuonganh/chatpdf/src/lib/getObjectBuffer";
@@ -9,9 +8,10 @@ import { documents } from "/Users/phuonganh/chatpdf/src/app/lib/db/schema";
 import { db } from "/Users/phuonganh/chatpdf/src/app/lib/db/index";
 import { eq } from 'drizzle-orm';
 import { summaryQueue } from "../queue";
-const connection =new IORedis(process.env.REDIS_URL!,
-   {maxRetriesPerRequest: null}
-);
+const connection = {
+  connection: process.env.REDIS_URL!,
+  maxRetriesPerRequest: null,
+};
 
 
 const extractionWorker=new Worker(

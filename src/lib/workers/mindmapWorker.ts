@@ -1,17 +1,20 @@
- import "dotenv/config";
+import "dotenv/config";
 import { Worker } from "bullmq";
 import { db } from "@/app/lib/db";
 import { documents } from "@/app/lib/db/schema";
 import { eq } from "drizzle-orm";
 import OpenAI from "openai";
-import IORedis from "ioredis";
-import { generateMermaidFlowchart, generateMindmap } from "@/lib/utils"; // Adjust the import path as needed
+import { generateMindmap } from "@/lib/utils";
 
-const connection = new IORedis(process.env.REDIS_URL!,{ maxRetriesPerRequest: null });
+const connection = {
+  connection: process.env.REDIS_URL!,
+  maxRetriesPerRequest: null,
+};
+
 const openai = new OpenAI();
 
 console.log("mindmap workers started");
-
+ 
 const mindmapWorker = new Worker(
   "pdf-mindmap",
   async (job) => {
@@ -24,10 +27,10 @@ const mindmapWorker = new Worker(
 
       const completion = await openai.chat.completions.create({
         model: "chatgpt-4o-latest",
-       messages: [
-  {
-    role: "system",
-    content: `
+        messages: [
+          {
+            role: "system",
+            content: `
 You are a data formatter. Given the content summary, analyze it and generate a JSON object representing the most appropriate Mermaid diagram structure. The diagram type can be one of: flowchart, mindmap, timeline, or classDiagram.
 
 The JSON output must have the following format, depending on the diagram type:
@@ -82,7 +85,6 @@ The JSON output must have the following format, depending on the diagram type:
 
 Only output the JSON object, no additional text or explanation.
 
-
 Before outputting, replace **all** special characters in node labels that may cause Mermaid syntax errors with their corresponding HTML entities. Specifically, replace:
 
 - / with &#47;
@@ -118,22 +120,22 @@ Output format example:
   ]
 }
 `
-  },
-  {
-    role: "user",
-    content: doc.summary!,
-  },
-],
+          },
+          {
+            role: "user",
+            content: doc.summary!,
+          },
+        ],
       });
 
       const jsonString = completion.choices[0].message.content;
-       if (!jsonString) {
+      if (!jsonString) {
         throw new Error("No response from OpenAI");
       }
-      console.log("here is the data from AI:",jsonString)
+      console.log("here is the data from AI:", jsonString);
+      
       let data;
       try {
-        
         data = JSON.parse(jsonString);
       } catch (e) {
         throw new Error("Failed to parse JSON from OpenAI response: " + (e as Error).message);
@@ -147,7 +149,8 @@ Output format example:
         .update(documents)
         .set({ mindmap, status: "mindmap_ready" })
         .where(eq(documents.id, documentId));
-        console.log("Generated mindmap string:", mindmap);
+      
+      console.log("Generated mindmap string:", mindmap);
 
     } catch (err: any) {
       await db

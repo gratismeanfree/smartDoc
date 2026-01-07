@@ -6,10 +6,10 @@ import { db } from "@/app/lib/db";
 import { documents } from "@/app/lib/db/schema";
 import { eq } from "drizzle-orm";
 import OpenAI from "openai"
-import IORedis from "ioredis" 
-const connection=new IORedis(process.env.REDIS_URL!,
-  {maxRetriesPerRequest:null}
-)
+const connection = {
+  connection: process.env.REDIS_URL!,
+  maxRetriesPerRequest: null,
+};
 const openai=new OpenAI();
 console.log("summary worker works")
 const summaryWorker=new Worker("pdf-summary",
@@ -70,6 +70,7 @@ Only the structured Markdown content.
       .where(eq(documents.id,documentId));
       await mindmapQueue.add("mindmap",{documentId});
 
+     
       
     }catch(err:any){
       await db
