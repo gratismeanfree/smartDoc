@@ -1,9 +1,18 @@
 import { childSend } from "bullmq"
 import ReactMarkdown from "react-markdown"
-export function SummaryRenderer({markdown}:{markdown:string}) {
+interface MarkdownType {
+  markdown:string |null
+}
+export function SummaryRenderer({markdown}:MarkdownType) {
+  if (!markdown){
+    return <p>No summary found</p>
+  }
+  
   const cleanedMarkdown = markdown
   .replace(/^```markdown\s*/g, "")
   .replace(/^```\s*$/g, "");
+  
+ 
 
   return (
     <article className="max-w-none">

@@ -1,6 +1,9 @@
 "use client";
 import Mermaid from "./Mermaid";
-export default function MindmapView({ mindmap }: { mindmap: string }) {
+interface MindmapType {
+  mindmap:string |null
+}
+export default function MindmapView({ mindmap }: MindmapType) {
   console.log("Mindmap string passed to Mermaid:", JSON.stringify(mindmap));
 
   if (!mindmap || mindmap.trim() === "") {
