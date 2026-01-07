@@ -1,4 +1,4 @@
-import "dotenv/config";
+ import "dotenv/config";
 import { Worker } from "bullmq";
 import { db } from "@/app/lib/db";
 import { documents } from "@/app/lib/db/schema";
@@ -127,9 +127,13 @@ Output format example:
       });
 
       const jsonString = completion.choices[0].message.content;
+       if (!jsonString) {
+        throw new Error("No response from OpenAI");
+      }
       console.log("here is the data from AI:",jsonString)
       let data;
       try {
+        
         data = JSON.parse(jsonString);
       } catch (e) {
         throw new Error("Failed to parse JSON from OpenAI response: " + (e as Error).message);
