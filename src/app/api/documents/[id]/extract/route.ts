@@ -8,12 +8,9 @@ import { documents } from "@/app/lib/db/schema";
 
 export async function POST(
   req: Request,
-  context: { params: Promise<{ id: string }> }
+  context: { params: Promise<{ id: string }> } // Changed to Promise
 ) {
-  const { id: documentId } = await context.params;
-  console.log("api called with id", documentId);
-
-  // 🔐 AUTH CHECK GOES HERE
+  const { id: documentId } = await context.params; // Added await
 
   try {
     // 1. Fetch document - get array, extract first item
@@ -23,8 +20,7 @@ export async function POST(
       .where(eq(documents.id, documentId));
 
     if (documentsList.length === 0) {
-            console.warn("[API] Document not found:", documentId);
-
+      console.warn("[API] Document not found:", documentId);
       return NextResponse.json({ error: "Document not found" }, { status: 404 });
     }
 
@@ -38,6 +34,7 @@ export async function POST(
     // 3. Extract text from PDF
     const text = await extractPdf(buffer);
     console.log("[API] Extracted text length:", text.length);
+
     // 4. Update document status & extracted_text using Drizzle's update builder
     await db
       .update(documents)
@@ -47,11 +44,10 @@ export async function POST(
         getErrorMessage: null,
       })
       .where(eq(documents.id, documentId));
-      console.log("[API] Document updated with extracted text");
 
+    console.log("[API] Document updated with extracted text");
 
     return NextResponse.json({ success: true });
-
   } catch (error: any) {
     console.error("[API] Extraction failed:", error);
 
