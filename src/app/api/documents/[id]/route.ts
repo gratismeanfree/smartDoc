@@ -4,24 +4,32 @@ import { documents } from "@/app/lib/db/schema";
 import { eq } from "drizzle-orm";
 import { auth } from "@clerk/nextjs/server";
 import { and } from "drizzle-orm";
-export async function GET(_: Request, { params }: { params: { id: string } }) {
-  const resolvedParams = await params;
-  const id = resolvedParams.id;
+
+export async function GET(
+  _: Request, 
+  { params }: { params: Promise<{ id: string }> } // Changed to Promise
+) {
+  const { id } = await params; // Simplified - directly destructure after await
+
   const [doc] = await db
     .select()
     .from(documents)
     .where(eq(documents.id, id));
-  
+
   return NextResponse.json(doc);
 }
-export async function DELETE(req: Request, { params }: { params: { id: string } }) {
+
+export async function DELETE(
+  req: Request, 
+  { params }: { params: Promise<{ id: string }> } // Changed to Promise
+) {
   const { userId } = await auth();
 
   if (!userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const docId = params.id;
+  const { id: docId } = await params; // Added await
 
   // Optional: verify the document exists and belongs to the user before deleting
   const existingDoc = await db
@@ -41,6 +49,3 @@ export async function DELETE(req: Request, { params }: { params: { id: string } 
 
   return NextResponse.json({ success: true });
 }
-
-
-
