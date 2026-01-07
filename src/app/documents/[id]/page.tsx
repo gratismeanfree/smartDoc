@@ -1,5 +1,4 @@
 import DocumentQuizSection from "@/app/components/DocumentQuizSection";
-import DocumentWork from "@/app/components/DocumentWork";
 import DocumentView from "@/components/DocumentView";
 export default async function DocumentPage({
   params,

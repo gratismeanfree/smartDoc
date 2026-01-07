@@ -1,9 +1,14 @@
 "use client";
-
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 
-export default function QuizGenerator({ documentId, onReady }) {
+// Add type definition
+interface QuizGeneratorProps {
+  documentId: string;
+  onReady: (quiz: any) => void;
+}
+
+export default function QuizGenerator({ documentId, onReady }: QuizGeneratorProps) {
   const [difficulty, setDifficulty] = useState("easy");
   const [count, setCount] = useState(5);
   const [loading, setLoading] = useState(false);

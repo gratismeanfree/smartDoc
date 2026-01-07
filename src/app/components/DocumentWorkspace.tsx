@@ -7,8 +7,14 @@ import QuizSection from "./QuizSection";
 import { SummaryRenderer } from "./SummaryRenderer";
 
 type Tab = "summary" | "mindmap" | "quiz";
-
-export default function DocumentWorkspace({ doc }) {
+interface DocumentWorkspaceProps {
+  doc: {
+    id: string;
+    summary: string | null;
+    mindmap: string | null;
+  };
+}
+export default function DocumentWorkspace({ doc }: DocumentWorkspaceProps) {
   const searchParams = useSearchParams();
   const router = useRouter();
 

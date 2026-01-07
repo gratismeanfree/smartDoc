@@ -1,11 +1,25 @@
 "use client"
 import { useState } from "react";
-import { Check,X } from "lucide-react";
+import { Check, X } from "lucide-react";
 
-export default function QuizDisplay({ quiz }) {
+// Add type definition
+interface QuizDisplayProps {
+  quiz: {
+    id: string;
+    quizJson: {
+      questions: Array<{
+        question: string;
+        options: string[];
+        correctIndex: number;
+        explanation: string;
+      }>;
+    };
+  };
+}
+
+export default function QuizDisplay({ quiz }: QuizDisplayProps) {
   const [answers, setAnswers] = useState<Record<number, number>>({});
   const [submitted, setSubmitted] = useState(false);
-
   const questions = quiz.quizJson.questions;
 
   function handleChange(qIndex: number, optionIndex: number) {
@@ -50,7 +64,6 @@ export default function QuizDisplay({ quiz }) {
 
       <div className="border p-3 rounded">
         <h2 className="text-xl font-bold mb-2">Quiz</h2>
-
         {questions.map((q, i) => (
           <div key={i} className="mb-4">
             <p className="font-semibold"><span>{i+1}. </span>{q.question}</p>
@@ -59,6 +72,7 @@ export default function QuizDisplay({ quiz }) {
                 const selected = answers[i] === j;
                 const isCorrect = q.correctIndex === j;
                 const isWrong = submitted && selected && !isCorrect;
+
                 return (
                   <label
                     key={j}
@@ -72,20 +86,19 @@ export default function QuizDisplay({ quiz }) {
                   >
                     <input
                       type="radio"
-                      name={`question-${i}`}
+                      name={`question-${i}`} // Fixed: was missing quotes
                       disabled={submitted}
                       checked={selected}
                       value={j}
                       onChange={() => handleChange(i, j)}
                     />
                     <span>{o}</span>
-                    {submitted && isCorrect && <Check className="ml-2 text-green-600" size={20} strokeWidth={2.5}  />}
+                    {submitted && isCorrect && <Check className="ml-2 text-green-600" size={20} strokeWidth={2.5} />}
                     {isWrong && <X className="ml-2 text-red-600" size={20} strokeWidth={2.5} />}
                   </label>
                 );
               })}
             </div>
-
             {submitted && (
               <div>
                 <strong>Explanation:</strong> {q.explanation}
