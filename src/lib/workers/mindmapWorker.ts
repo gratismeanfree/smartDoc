@@ -7,7 +7,7 @@ import OpenAI from "openai";
 import IORedis from "ioredis";
 import { generateMermaidFlowchart, generateMindmap } from "@/lib/utils"; // Adjust the import path as needed
 
-const connection = new IORedis({ maxRetriesPerRequest: null });
+const connection = new IORedis(process.env.REDIS_URL!,{ maxRetriesPerRequest: null });
 const openai = new OpenAI();
 
 console.log("mindmap workers started");

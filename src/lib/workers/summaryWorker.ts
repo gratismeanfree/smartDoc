@@ -7,7 +7,7 @@ import { documents } from "@/app/lib/db/schema";
 import { eq } from "drizzle-orm";
 import OpenAI from "openai"
 import IORedis from "ioredis" 
-const connection=new IORedis(
+const connection=new IORedis(process.env.REDIS_URL!,
   {maxRetriesPerRequest:null}
 )
 const openai=new OpenAI();

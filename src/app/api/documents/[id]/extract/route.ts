@@ -8,10 +8,10 @@ import { documents } from "@/app/lib/db/schema";
 
 export async function POST(
   req: Request,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
-  const documentId = params.id;
-    console.log("api called with id",params.id)
+  const { id: documentId } = await context.params;
+  console.log("api called with id", documentId);
 
   // 🔐 AUTH CHECK GOES HERE
 

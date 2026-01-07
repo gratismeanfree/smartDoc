@@ -9,7 +9,7 @@ import { documents } from "/Users/phuonganh/chatpdf/src/app/lib/db/schema";
 import { db } from "/Users/phuonganh/chatpdf/src/app/lib/db/index";
 import { eq } from 'drizzle-orm';
 import { summaryQueue } from "../queue";
-const connection =new IORedis(
+const connection =new IORedis(process.env.REDIS_URL!,
    {maxRetriesPerRequest: null}
 );
 

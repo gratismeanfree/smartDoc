@@ -4,7 +4,7 @@ import { db } from "@/app/lib/db";
 import { documents } from "@/app/lib/db/schema";
 import { addExtractionJob } from "@/lib/addExtractionJob";
 import { auth } from "@clerk/nextjs/server";
-
+import { desc } from "drizzle-orm";
 import { eq } from "drizzle-orm";
 export async function POST(req: Request) {
   const {userId}=await auth();
