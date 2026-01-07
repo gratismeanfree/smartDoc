@@ -37,7 +37,7 @@ export async function GET(req: Request) {
     .select()
     .from(documents)
     .where(eq(documents.userId, userId))
-    .orderBy(documents.createdAt, "desc");
+    .orderBy(desc(documents.createdAt));
 
   return NextResponse.json(userDocs);
 }
