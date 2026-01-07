@@ -5,12 +5,14 @@ import { eq } from "drizzle-orm";
 
 export async function GET(
   _: Request,
-  { params }: { params: { documentId: string } }
+  { params }: { params: Promise<{ documentId: string }> } // Changed to Promise
 ) {
+  const { documentId } = await params; // Added await
+
   const [quiz] = await db
     .select()
     .from(quizzes)
-    .where(eq(quizzes.documentId, params.documentId));
+    .where(eq(quizzes.documentId, documentId));
 
   return NextResponse.json(quiz ?? null);
 }
