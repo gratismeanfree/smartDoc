@@ -111,7 +111,7 @@ export function generateMermaidDiagram(
 ): string {
   switch (type) {
     case "flowchart":
-      return generateFlowchart(data as FlowchartData);
+      return generateMindmap(data as MindmapData);
     case "mindmap":
       return generateMindmap(data as MindmapData);
     case "timeline":
