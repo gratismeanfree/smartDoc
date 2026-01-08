@@ -2,10 +2,10 @@ import "dotenv/config"
 console.log("worker started")
 
 import { Worker } from "bullmq";
-import { extractPdf } from "/Users/phuonganh/chatpdf/src/lib/extractPDF";
-import { getObjectBuffer } from "/Users/phuonganh/chatpdf/src/lib/getObjectBuffer";
-import { documents } from "/Users/phuonganh/chatpdf/src/app/lib/db/schema";
-import { db } from "/Users/phuonganh/chatpdf/src/app/lib/db/index";
+import { extractPdf } from "../extractPDF";
+import { getObjectBuffer } from "../getObjectBuffer";
+import { documents } from "@/app/lib/db/schema";
+import { db } from "@/app/lib/db";
 import { eq } from 'drizzle-orm';
 import { summaryQueue } from "../queue";
 const connection = {
