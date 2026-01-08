@@ -40,7 +40,7 @@
     "lucide-react": "^0.553.0",
     "md5": "^2.3.0",
     "mermaid": "^11.12.2",
-    "next": "16.0.3",
+    "next": "^16.1.1",
     "openai-edge": "^1.2.2",
     "parse-pdf": "^3.0.0",
     "pdf-parse": "^1.1.1",
