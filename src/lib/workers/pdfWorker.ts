@@ -1,5 +1,6 @@
 import "dotenv/config"
 console.log("worker started")
+console.log("here is the url of redis:",process.env.REDIS_URL!)
 
 import { Worker } from "bullmq";
 import { extractPdf } from "../extractPDF";
@@ -9,7 +10,7 @@ import { db } from "@/app/lib/db";
 import { eq } from 'drizzle-orm';
 import { summaryQueue } from "../queue";
 const connection = {
-  connection: process.env.REDIS_URL!,
+  url: process.env.REDIS_URL!,
   maxRetriesPerRequest: null,
 };
 

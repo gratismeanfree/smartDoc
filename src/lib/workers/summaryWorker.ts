@@ -7,7 +7,7 @@ import { documents } from "@/app/lib/db/schema";
 import { eq } from "drizzle-orm";
 import OpenAI from "openai"
 const connection = {
-  connection: process.env.REDIS_URL!,
+  url: process.env.REDIS_URL!,
   maxRetriesPerRequest: null,
 };
 const openai=new OpenAI();

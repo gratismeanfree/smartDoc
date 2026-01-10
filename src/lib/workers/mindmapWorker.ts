@@ -7,7 +7,7 @@ import OpenAI from "openai";
 import { generateMindmap } from "@/lib/utils";
 
 const connection = {
-  connection: process.env.REDIS_URL!,
+  url: process.env.REDIS_URL!,
   maxRetriesPerRequest: null,
 };
 
