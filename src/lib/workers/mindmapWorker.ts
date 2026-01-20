@@ -1,3 +1,5 @@
+console.log("🔥 MINDMAP WORKER FILE LOADED");
+
 import { text } from 'drizzle-orm/pg-core';
 import "dotenv/config";
 import { Worker } from "bullmq";
