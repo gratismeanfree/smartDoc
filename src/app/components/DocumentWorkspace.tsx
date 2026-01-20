@@ -2,16 +2,21 @@
 
 import { useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import MindmapView from "./MindmapRenderer";
+import MindmapRenderer from "./MindmapRenderer";
 import QuizSection from "./QuizSection";
 import { SummaryRenderer } from "./SummaryRenderer";
 
 type Tab = "summary" | "mindmap" | "quiz";
+interface MindmapType {
+id:string,
+text:string,
+children:Array<MindmapType>
+}
 interface DocumentWorkspaceProps {
   doc: {
     id: string;
     summary: string | null;
-    mindmap: string | null;
+    mindmap: MindmapType | null;
   };
 }
 export default function DocumentWorkspace({ doc }: DocumentWorkspaceProps) {
@@ -101,7 +106,7 @@ export default function DocumentWorkspace({ doc }: DocumentWorkspaceProps) {
               active === "mindmap" ? "block opacity-100" : "hidden opacity-0"
             }`}
           >
-            <MindmapView mindmap={doc.mindmap} />
+            <MindmapRenderer data={doc.mindmap} />
           </section>
 
           {/* Quiz */}
