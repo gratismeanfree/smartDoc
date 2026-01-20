@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import MindmapView from "./MindmapView";
+import MindmapView from "./MindmapRenderer";
 import QuizSection from "./QuizSection";
 import { SummaryRenderer } from "./SummaryRenderer";
 

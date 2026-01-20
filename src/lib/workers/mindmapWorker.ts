@@ -1,11 +1,25 @@
+import { text } from 'drizzle-orm/pg-core';
 import "dotenv/config";
 import { Worker } from "bullmq";
 import { db } from "@/app/lib/db";
 import { documents } from "@/app/lib/db/schema";
 import { eq } from "drizzle-orm";
 import OpenAI from "openai";
-import { generateMindmap } from "@/lib/utils";
+interface MindmapType {
+id:string,
+text:string,
+children:Array<MindmapType>
+}
+function validateMindmap(data:MindmapType):boolean {
+  if (!data || typeof data!=="object") return false
 
+  if (!data.id || typeof data.id !=="string") return false
+  if (!data.text|| typeof data.text!=="string") return false
+
+  if (!Array.isArray(data.children)) return false
+  for (const child of data.children) if (!validateMindmap(child)) return false
+  return true
+}
 const connection = {
   url: process.env.REDIS_URL!,
   maxRetriesPerRequest: null,
@@ -26,109 +40,30 @@ const mindmapWorker = new Worker(
         .where(eq(documents.id, documentId));
 
       const completion = await openai.chat.completions.create({
-        model: "chatgpt-4o-latest",
-        messages: [
-          {
-            role: "system",
-            content: `
-You are a data formatter. Given the content summary, analyze it and generate a JSON object representing the most appropriate Mermaid diagram structure. The diagram type can be one of: flowchart, mindmap, timeline, or classDiagram.
-
-The JSON output must have the following format, depending on the diagram type:
-
-- For flowchart:
-{
-  "type": "flowchart",
-  "nodes": [
-    { "id": "QMP", "label": "Quality Management Presentation", "class": "main" },
-    { "id": "RP", "label": "Reporting Period", "class": "main" },
-    { "id": "PS1", "label": "Product / Service 1", "class": "product" }
-  ],
-  "edges": [
-    { "from": "QMP", "to": "RP" },
-    { "from": "QMP", "to": "PS1" }
-  ]
-}
-
-- For mindmap:
-{
-  "type": "mindmap",
-  "rootLabel": "Main Root Label",
-  "children": [
+  model: "gpt-4o-2024-08-06", // Use a model that supports response_format
+  messages: [
     {
-      "id": "Child1",
-      "label": "First Child",
-      "children": [ ...nested children... ]
-    }
-  ]
+      role: "system",
+      content: `Generate a mindmap as a JSON object with this structure:
+{
+  "id": "root",
+  "text": "Main Topic",
+  "children": [...]
 }
 
-- For timeline:
-{
-  "type": "timeline",
-  "title": "Timeline Title",
-  "events": [
-    { "date": "2023-01-01", "description": "Start reporting period" },
-    { "date": "2023-01-10", "description": "Collect product status data" }
-  ]
-}
-
-- For classDiagram:
-{
-  "type": "classDiagram",
-  "classes": [
-    { "name": "Product", "attributes": ["name", "price"], "methods": ["calculateTax"] }
+Each node has "id" (string), "text" (string), and "children" (array).`,
+    },
+    {
+      role: "user",
+      content: `Create a mindmap for: ${doc.summary}`,
+    },
   ],
-  "relationships": [
-    { "from": "Product", "to": "Category", "label": "belongsTo" }
-  ]
-}
-
-Only output the JSON object, no additional text or explanation.
-
-Before outputting, replace **all** special characters in node labels that may cause Mermaid syntax errors with their corresponding HTML entities. Specifically, replace:
-
-- / with &#47;
-- \\ with &#92;
-- ( with &#40;
-- ) with &#41;
-- [ with &#91;
-- ] with &#93;
-- { with &#123;
-- } with &#125;
-- " with &#34;
-- ' with &#39;
-- & with &#38;
-- < with &#60;
-- > with &#62;
-- If a label contains spaces or special characters (such as parentheses (), slashes /, backslashes \\, brackets [], braces {}, quotes, ampersands, or angle brackets), wrap the entire label in double parentheses: ((label text)).
-
-- Additionally, replace special characters in labels with their HTML entities where needed, for example, replace / with &#47;.
-
-Output only the JSON object with no extra text or explanation.
-
-Output format example:
-
-{
-  "nodes": [
-    { "id": "QMP", "label": "Quality Management Presentation", "class": "main" },
-    { "id": "RP", "label": "Reporting Period", "class": "main" },
-    { "id": "PS1", "label": "Product &#47; Service 1", "class": "product" }
-  ],
-  "edges": [
-    { "from": "QMP", "to": "RP" },
-    { "from": "QMP", "to": "PS1" }
-  ]
-}
-`
-          },
-          {
-            role: "user",
-            content: doc.summary!,
-          },
-        ],
-      });
+  response_format: { type: "json_object" }, // Forces valid JSON output
+  temperature: 0.2,
+});
 
       const jsonString = completion.choices[0].message.content;
+      
       if (!jsonString) {
         throw new Error("No response from OpenAI");
       }
@@ -140,17 +75,15 @@ Output format example:
       } catch (e) {
         throw new Error("Failed to parse JSON from OpenAI response: " + (e as Error).message);
       }
-
-      const mindmap = generateMindmap(data);
-
-      console.log("here is the mindmap:", mindmap);
+      if (!validateMindmap(data)) 
+        throw new Error("Invalid structure for output")
 
       await db
         .update(documents)
-        .set({ mindmap, status: "mindmap_ready" })
+        .set({ mindmap:data, status: "mindmap_ready" })
         .where(eq(documents.id, documentId));
       
-      console.log("Generated mindmap string:", mindmap);
+    ;
 
     } catch (err: any) {
       await db

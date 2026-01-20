@@ -37,7 +37,7 @@ export const documents=pgTable("documents",{
   s3Key:text("s3_key").notNull(),
   extractedText:text("extracted_text"),
   summary:text("summary"),
-  mindmap:text("mindmap"),
+  mindmap:jsonb("mindmap"),
   status:documentStatusEnum("status")
   .notNull().
   default("uploaded"),

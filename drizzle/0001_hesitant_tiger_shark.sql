@@ -1,0 +1,1 @@
+ALTER TABLE "documents" ALTER COLUMN "mindmap" SET DATA TYPE jsonb;

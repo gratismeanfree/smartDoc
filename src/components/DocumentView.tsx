@@ -1,7 +1,8 @@
 "use client";
+//add a few handle conditions when things don't work out
 import { useEffect, useState } from "react";
 import ReactMarkDown from "react-markdown";
-import MindmapView from "@/app/components/MindmapView";
+import MindmapView from "@/app/components/MindmapRenderer";
 import DocumentWorkspace from "@/app/components/DocumentWorkspace";
 
 type Document = {
