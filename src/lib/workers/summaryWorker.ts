@@ -1,3 +1,5 @@
+console.log("summary worker works")
+
 import "dotenv/config"
 console.log("summary worker strarted")
 import { Worker } from "bullmq";
