@@ -4,9 +4,9 @@ import React, { useEffect, useState } from "react";
 import ReactFlow, { Node, Edge, Controls, Background } from "reactflow";
 import "reactflow/dist/style.css";
 
-import CenterNode from "./nodes/CenterNode";
-import BranchNode from "./nodes/BranchNode";
-import LeafNode from "./nodes/LeafNode";
+import CenterNode from "./CenterNode";
+import LeafNode from "./LeafNode";
+import BranchNode from "./BranchNode";
 
 interface MindmapType {
   id: string;
