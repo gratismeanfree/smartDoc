@@ -46,7 +46,7 @@ const mindmapWorker = new Worker(
   messages: [
     {
       role: "system",
-      content: `Generate a mindmap as a JSON object with this structure:
+      content: `Generate a mindmap as a JSON object with each of the text of the node not longer than 10 words with this structure:
 {
   "id": "root",
   "text": "Main Topic",
