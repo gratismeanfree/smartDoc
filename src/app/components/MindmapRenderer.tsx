@@ -112,7 +112,7 @@ function buildMindmap(data: MindmapType) {
   nodes.push({
     id: data.id,
     position: { x: rootX, y: rootY },
-    data: { label: data.text, 20 },
+    data: { label: data.text},
     type: "center",
   });
 
