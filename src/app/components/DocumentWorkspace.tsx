@@ -8,15 +8,17 @@ import { SummaryRenderer } from "./SummaryRenderer";
 
 type Tab = "summary" | "mindmap" | "quiz";
 interface MindmapType {
+
 id:string,
 text:string,
 children:Array<MindmapType>
 }
 interface DocumentWorkspaceProps {
   doc: {
-    id: string;
-    summary: string | null;
-    mindmap: MindmapType | null;
+    id: string,
+    status:string,
+    summary: string | null,
+    mindmap: MindmapType | null
   };
 }
 export default function DocumentWorkspace({ doc }: DocumentWorkspaceProps) {

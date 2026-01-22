@@ -4,12 +4,17 @@ import { useEffect, useState } from "react";
 import ReactMarkDown from "react-markdown";
 import MindmapView from "@/app/components/MindmapRenderer";
 import DocumentWorkspace from "@/app/components/DocumentWorkspace";
+interface MindmapType {
+id:string,
+text:string,
+children:Array<MindmapType>
+}
 
 type Document = {
   id: string;
   status: string;
   summary: string | null;
-  mindmap: string | null;
+  mindmap: MindmapType | null;
 };
 
 function LoadingSpinner() {
