@@ -1,7 +1,7 @@
 "use client"
 import {useState} from "react"
 import { setTimeout } from "timers/promises";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 export default function FeedbackForm () {
   const router=useRouter()
   const [type,setType]=useState("")
