@@ -1,3 +1,4 @@
+import { time } from 'console';
 import { NotNull } from './../../../../node_modules/drizzle-orm/column-builder.d';
 import { integer, pgEnum, serial,text,timestamp,varchar,uuid, jsonb, } from "drizzle-orm/pg-core";
 import { pgTable } from "drizzle-orm/pg-core";
@@ -37,7 +38,7 @@ export const documents=pgTable("documents",{
   s3Key:text("s3_key").notNull(),
   extractedText:text("extracted_text"),
   summary:text("summary"),
-  mindmap:jsonb("mindmap"),
+  mindmap:text("mindmap"),
   status:documentStatusEnum("status")
   .notNull().
   default("uploaded"),
@@ -64,5 +65,14 @@ export const quizAttempts = pgTable("quiz_attempts", {
   answers: jsonb("answers").notNull(),
   createdAt: timestamp("created_at").defaultNow()
 });
+export const feedback=pgTable("feedback",{
+  id:uuid("id").defaultRandom().primaryKey(),
+  userId:uuid("user_id"),
+  email:text("email"),
+  type:text("type").notNull(),
+  message:text("message").notNull(),
+  createdAt:timestamp("created_at").defaultNow()
+
+})
 
 
